@@ -10,9 +10,7 @@
 *.so.*
 
 *.lv2
-*.make
 *.make-e
-Makefile
 object_script.*.Debug
 object_script.*.Release
 
