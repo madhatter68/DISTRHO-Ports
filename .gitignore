@@ -9,7 +9,6 @@
 *.so
 *.so.*
 
-*.lv2
 *.make-e
 object_script.*.Debug
 object_script.*.Release
