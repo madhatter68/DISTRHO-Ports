@@ -663,6 +663,13 @@ inline void ObxdAudioProcessor::processMidiPerSample(MidiBuffer::Iterator* iter,
 		{
 			synth.allSoundOff();
 		}
+        if(midiMsg->isProgramChange())
+        {
+            int pc = midiMsg->getProgramChangeNumber();
+            if (pc < getNumPrograms()) {
+                setCurrentProgram(pc);
+            }
+        }
 
 	}
 }
