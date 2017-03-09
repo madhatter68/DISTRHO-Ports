@@ -709,13 +709,12 @@ void ObxdAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& mi
 		synth.setPlayHead(pos.bpm,pos.ppqPosition);
     }
 
-	while (samplePos < numSamples)
-	{
-		processMidiPerSample(&ppp,samplePos);
-
-		synth.processSample(channelData1+samplePos,channelData2+samplePos);
-
-		samplePos++;
+    int samplesPerProcess = (numSamples > 128) ? 128 : numSamples;
+	while (samplePos < numSamples) {
+		processMidiPerSample(&ppp,samplePos+samplesPerProcess-1);
+		//synth.processSample(channelData1+samplePos,channelData2+samplePos);
+		synth.processSample(channelData1, channelData2, samplePos, samplesPerProcess);
+		samplePos+=samplesPerProcess;
 	}
 }
 

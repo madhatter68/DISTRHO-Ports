@@ -95,6 +95,7 @@ public:
 	}
 	void setVoiceCount(int count)
 	{
+        count = (count > MAX_VOICES) ? MAX_VOICES : count;
 		for(int i = count ; i < MAX_VOICES;i++)
 		{
 			voices[i].NoteOff();
@@ -340,41 +341,31 @@ public:
 		}
 		return 0;
 	}
-	void processSample(float* sm1,float* sm2)
+
+	void processSample(float* sm1,float* sm2, int pos, int nsamples)
 	{
-		mlfo.update();
-		vibratoLfo.update();
 		float vl=0,vr=0;
-		float vlo = 0 , vro = 0 ;
 		float lfovalue = mlfo.getVal();
 		float viblfo = vibratoEnabled?(vibratoLfo.getVal() * vibratoAmount):0;
-		float lfovalue2=0,viblfo2=0;
-		if(Oversample)
-		{		
-			mlfo.update();
-		vibratoLfo.update();
-		lfovalue2 = mlfo.getVal();
-		viblfo2 = vibratoEnabled?(vibratoLfo.getVal() * vibratoAmount):0;
+        float x1[8][128];
+
+		for(int i = 0 ; i < totalvc;i++) {
+            for(int j=0; j<nsamples; j++) {
+			    x1[i][j] = processSynthVoice(voices[i],lfovalue,viblfo);
+            }
 		}
 
-		for(int i = 0 ; i < totalvc;i++)
-		{
-				float x1 = processSynthVoice(voices[i],lfovalue,viblfo);
-				if(Oversample)
-				{
-					float x2 =  processSynthVoice(voices[i],lfovalue2,viblfo2);
-					vlo+=x2*(1-pannings[i]);
-					vro+=x2*(pannings[i]);
-				}
-				vl+=x1*(1-pannings[i]);
-				vr+=x1*(pannings[i]);
-		}
-		if(Oversample)
-		{
-			vl = left.Calc(vl,vlo);
-			vr = right.Calc(vr,vro);
-		}
-		*sm1 = vl*Volume;
-		*sm2 = vr*Volume;
+        for(int j=0; j<nsamples; j++) {
+		    vl = vr = 0;
+		    for(int i=0; i<totalvc; i++) {
+		        vl += x1[i][j]*(1-pannings[i]);
+		        vr += x1[i][j]*(pannings[i]);
+            }
+		    *(sm1+pos+j) = vl*Volume;
+		    *(sm2+pos+j) = vr*Volume;
+
+		    mlfo.update();
+		    vibratoLfo.update();
+        }
 	}
 };

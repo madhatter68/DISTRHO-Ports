@@ -57,18 +57,18 @@ public:
 	void setSampleRate(float sr)
 	{
 		sampleRate = sr;
-		cutoffSmoother.setSampleRate(sr);
-		pitchWheelSmoother.setSampleRate(sr);
-		modWheelSmoother.setSampleRate(sr);
+		cutoffSmoother.setSampleRate(sr*128);
+		pitchWheelSmoother.setSampleRate(sr*128);
+		modWheelSmoother.setSampleRate(sr*128);
 		synth.setSampleRate(sr);
 	}
-	void processSample(float *left,float *right)
+	void processSample(float *left,float *right, int npos, int nsamples)
 	{
 		processCutoffSmoothed(cutoffSmoother.smoothStep());
 		procPitchWheelSmoothed(pitchWheelSmoother.smoothStep());
 		procModWheelSmoothed(modWheelSmoother.smoothStep());
 
-		synth.processSample(left,right);
+		synth.processSample(left,right,npos,nsamples);
 	}
 	void allNotesOff()
 	{
