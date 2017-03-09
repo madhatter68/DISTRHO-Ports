@@ -27,7 +27,7 @@ function make_library_project(name)
   if (not os.getenv("NOOPTIMIZATIONS")) then
     package.config["Release"].buildoptions = {
         package.config["Release"].buildoptions,
-        "-mtune=generic", "-msse", "-msse2"
+        "-mtune=cortex-a53"
     }
   end
 
@@ -95,7 +95,7 @@ function make_plugin_project(name, spec)
   if (not os.getenv("NOOPTIMIZATIONS")) then
     package.config["Release"].buildoptions = {
       package.config["Release"].buildoptions,
-      "-mtune=generic", "-msse", "-msse2", "-mfpmath=sse"
+      "-mtune=cortex-a53"
     }
   end
 

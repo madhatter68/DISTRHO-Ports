@@ -37,7 +37,7 @@ lv2: libs
 	$(MAKE) -C LUFSMeter/LV2-Multi
 	$(MAKE) -C luftikus/LV2
 	$(MAKE) -C obxd/LV2
-	$(MAKE) -C pitchedDelay/LV2
+#	$(MAKE) -C pitchedDelay/LV2
 	$(MAKE) -C stereosourceseparation/LV2
 	$(MAKE) -C tal-dub-3/LV2
 	$(MAKE) -C tal-filter/LV2
@@ -73,7 +73,7 @@ vst: libs
 	$(MAKE) -C LUFSMeter/VST-Multi
 	$(MAKE) -C luftikus/VST
 	$(MAKE) -C obxd/VST
-	$(MAKE) -C pitchedDelay/VST
+#	$(MAKE) -C pitchedDelay/VST
 	$(MAKE) -C stereosourceseparation/VST
 	$(MAKE) -C tal-dub-3/VST
 	$(MAKE) -C tal-filter/VST
