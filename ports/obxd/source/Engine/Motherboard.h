@@ -344,6 +344,8 @@ public:
 
 	void processSample(float* sm1,float* sm2, int pos, int nsamples)
 	{
+		mlfo.update(nsamples);
+		vibratoLfo.update(nsamples);
 		float vl=0,vr=0;
 		float lfovalue = mlfo.getVal();
 		float viblfo = vibratoEnabled?(vibratoLfo.getVal() * vibratoAmount):0;
@@ -363,9 +365,6 @@ public:
             }
 		    *(sm1+pos+j) = vl*Volume;
 		    *(sm2+pos+j) = vr*Volume;
-
-		    mlfo.update();
-		    vibratoLfo.update();
         }
 	}
 };

@@ -23,11 +23,10 @@
  */
 #pragma once
 #include "SynthEngine.h"
-class Lfo
-{
+class Lfo {
 private:
 	float phase;
-	float s, sq, sh;
+	float sh, Res;
 	float s1;
     Random rg;
 	float SampleRate;
@@ -42,8 +41,7 @@ public:
 	float frUnsc;//frequency value without sync
 	float rawParam;
 	int waveForm;
-	Lfo()
-	{
+	Lfo() {
 		phaseInc = 0;
 		frUnsc=0;
 		syncRate = 1;
@@ -52,77 +50,72 @@ public:
 		s1=0;
 		Frequency=1;
 		phase=0;
-		s=sq=sh=0;
+		sh=0;
 		rg=Random();
 	}
-	void setSynced()
-	{
+
+	void setSynced() {
 		synced = true;
 		recalcRate(rawParam);
 	}
-	void setUnsynced()
-	{
+
+	void setUnsynced() {
 		synced = false;
 		phaseInc = frUnsc;
 	}
-	void hostSyncRetrigger(float bpm,float quaters)
-	{
-		if(synced)
-		{
+
+	void hostSyncRetrigger(float bpm,float quaters) {
+		if(synced) {
 			phaseInc = (bpm/60.0)*syncRate;
 			phase = phaseInc*quaters;
 			phase = (fmod(phase,1)*float_Pi*2-float_Pi);
 		}
 	}
-	inline float getVal()
-	{
-		 float Res = 0;
-            if((waveForm &1) !=0 )
-                Res+=s;
-            if((waveForm&2)!=0)
-                Res+=sq;
-            if((waveForm&4)!=0)
-                Res+=sh;
-			return tptlpupw(s1, Res,3000,SampleRateInv);
+
+	inline float getVal() {
+		return tptlpupw(s1, Res, 3000, SampleRateInv);
 	}
-	void setSamlpeRate(float sr)
-	{
+
+	void setSamlpeRate(float sr) {
 		SampleRate=sr;
 		SampleRateInv = 1 / SampleRate;
 	}
-	inline void update()
-	{
-		phase+=((phaseInc * float_Pi*2 * SampleRateInv));
-		sq = (phase>0?1:-1);
-		s = sin(phase);
-		if(phase > float_Pi)
-		{
-			phase-=2*float_Pi;
+
+	inline void update(int nsamples) {
+		phase += phaseInc * float_Pi*2 * SampleRateInv * nsamples;
+		if(phase > float_Pi) {
+			phase -= 2*float_Pi;
 			sh = rg.nextFloat()*2-1;
 		}
 
+		Res = 0;
+        if((waveForm & 1) != 0)
+		    Res += sin(phase);
+        if((waveForm & 2) != 0)
+		    Res += (phase>0?1:-1);
+        if((waveForm & 4) != 0)
+            Res += sh;
 	}
-	void setFrequency(float val)
-	{
+
+	void setFrequency(float val) {
 		frUnsc = val;
 		if(!synced)
 			phaseInc = val;
 	}
-	void setRawParam(float param)//used for synced rate changes
-	{
+
+    //used for synced rate changes
+	void setRawParam(float param) {
 		rawParam = param;
-		if(synced)
-		{
+		if(synced) {
 			recalcRate(param);
 		}
 	}
-	void recalcRate(float param)
-	{
+
+	void recalcRate(float param) {
 		const int ratesCount = 9;
 		int parval = (int)(param*(ratesCount-1));
 		float rt = 1;
-		switch(parval)
-		{
+		switch(parval) {
 		case 0:
 			rt = 1.0 / 8;
 			break;
